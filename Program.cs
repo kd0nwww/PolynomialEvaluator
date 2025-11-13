@@ -4,7 +4,7 @@ class PolynomialEvaluator
 {
     public static void Main()
     {
-        string userInput;
+        string polyExpression;
         Console.WriteLine("Polynomial Calculator");
         Console.WriteLine("Type the polynomial you want to calculate.");
         Console.WriteLine("Example: 2x^2 + 3x + 8");
@@ -12,10 +12,29 @@ class PolynomialEvaluator
 
         while (true)
         {
-            userInput = Console.ReadLine();
+            polyExpression = Console.ReadLine();
                 
-            if (userInput == "q") break;
-            if (userInput == "") Console.WriteLine("Please enter the expression");
+            if (polyExpression == "q") break;
+            if (polyExpression == "") Console.WriteLine("Please enter the expression");
+
+            foreach(var item in SplitTerms(polyExpression))
+            {
+                Console.WriteLine(item);
+            }
         }
+    }
+
+    public static List<string> SplitTerms(string polynomial)
+    {
+        string sign = "+";
+        List<string> termsWithSigns = new List<string>();
+
+        foreach(var s in polynomial.Trim().Split(" "))
+        {
+            if (s == "") continue;
+            if (s == "+" || s == "-") sign = s;
+            else termsWithSigns.Add(sign + s);
+        }
+        return termsWithSigns;
     }
 }
