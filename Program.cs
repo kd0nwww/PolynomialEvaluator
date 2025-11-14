@@ -1,11 +1,12 @@
-﻿using System; 
+﻿using System;
+using System.Security;
 
 class PolynomialEvaluator
 {
     public static void Main()
     {
         Console.WriteLine("Polynomial Calculator");
-        Console.WriteLine("Type the polynomial you want to calculate.");
+        Console.WriteLine("Type the polynomial you want to calculate...");
         Console.WriteLine("Example: 2x^2 + 3x + 8");
         Console.WriteLine("'q' to exit.");
 
@@ -20,25 +21,25 @@ class PolynomialEvaluator
                 continue;
             }
 
-            Console.WriteLine();
+            Console.WriteLine("Provide x value for the expression...");
             var xValue = Console.ReadLine();
-            int parsedX;
 
-            if (!int.TryParse(xValue))
+            if (!int.TryParse(xValue, out var parsedX))
             {
-                Console.WriteLine("Please enter the x value");
+                Console.WriteLine("Please enter the integer for x.");
                 continue;
             }
-            else parsedX = int.Parse(xValue);
 
+            var terms = SplitTerms(polyExpression);
+            int[][] coefPowPairs = new int[terms.Count][];
 
-            foreach (var item in SplitTerms(polyExpression))
+            for (int i = 0; i < terms.Count; i++)
             {
-                foreach(var val in ParseTerm(item))
-                {
-                    Console.WriteLine(val);
-                }
+                coefPowPairs[i] = ParseTerm(terms[i]);
             }
+
+            var result = Calculate(coefPowPairs, parsedX);
+            Console.WriteLine(polyExpression + " = " + result);
         }
     }
 
@@ -86,6 +87,33 @@ class PolynomialEvaluator
         }
 
         return new int[] { coefficient, power };
+    }
+
+    public static int Calculate(int[][] coefPowerPairs, int x)
+    {
+        int sum = 0;
+
+        foreach(var coefPowerPair in coefPowerPairs)
+        {
+            int coefficient = coefPowerPair[0];
+            int power = coefPowerPair[1];
+
+            sum += PowInt(x, power) * coefficient;  
+        }
+
+        return sum;
+    }
+
+    public static int PowInt(int x, int power)
+    {
+        int result = 1;
+
+        for (int i = 0; i < power; i ++)
+        {
+            result *= x;
+        }
+
+        return result;
     }
 
 }
