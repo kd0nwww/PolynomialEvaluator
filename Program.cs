@@ -19,7 +19,10 @@ class PolynomialEvaluator
 
             foreach(var item in SplitTerms(polyExpression))
             {
-                Console.WriteLine(item);
+                foreach(var val in ParseTerm(item))
+                {
+                    Console.WriteLine(val);
+                }
             }
         }
     }
@@ -36,5 +39,37 @@ class PolynomialEvaluator
             else termsWithSigns.Add(sign + s);
         }
         return termsWithSigns;
+    }
+
+    public static int[] ParseTerm(string term)
+    {
+        int coefficient, power;
+
+        if (term.IndexOf("x") == -1)
+        {
+            coefficient = int.Parse(term);
+            power = 0;
+        }
+        else
+        {
+            var posX = term.IndexOf("x");
+            string coefSubstring = term.Substring(0, posX);
+            string powerSubstring = term.Substring(posX + 1);
+
+            if (coefSubstring.Length == 1)
+            {
+                if (coefSubstring == "+") coefficient = 1;
+                else coefficient = -1;
+            }
+            else coefficient = int.Parse(coefSubstring);
+
+            if (powerSubstring.IndexOf("^") == -1) power = 1;
+            else
+            {
+                power = int.Parse(powerSubstring.Substring(powerSubstring.IndexOf("^") + 1));
+            }
+        }
+
+        return new int[] { coefficient, power };
     }
 }
