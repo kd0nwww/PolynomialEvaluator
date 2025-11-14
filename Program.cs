@@ -4,7 +4,6 @@ class PolynomialEvaluator
 {
     public static void Main()
     {
-        string polyExpression;
         Console.WriteLine("Polynomial Calculator");
         Console.WriteLine("Type the polynomial you want to calculate.");
         Console.WriteLine("Example: 2x^2 + 3x + 8");
@@ -12,12 +11,28 @@ class PolynomialEvaluator
 
         while (true)
         {
-            polyExpression = Console.ReadLine();
+            var polyExpression = Console.ReadLine();
                 
             if (polyExpression == "q") break;
-            if (polyExpression == "") Console.WriteLine("Please enter the expression");
+            if (polyExpression == "")
+            {
+                Console.WriteLine("Please enter the expression");
+                continue;
+            }
 
-            foreach(var item in SplitTerms(polyExpression))
+            Console.WriteLine();
+            var xValue = Console.ReadLine();
+            int parsedX;
+
+            if (!int.TryParse(xValue))
+            {
+                Console.WriteLine("Please enter the x value");
+                continue;
+            }
+            else parsedX = int.Parse(xValue);
+
+
+            foreach (var item in SplitTerms(polyExpression))
             {
                 foreach(var val in ParseTerm(item))
                 {
@@ -72,4 +87,5 @@ class PolynomialEvaluator
 
         return new int[] { coefficient, power };
     }
+
 }
