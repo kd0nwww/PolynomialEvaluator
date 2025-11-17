@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Security;
+using System.IO;
+using System.Numerics;
+using System.Globalization;
 
 class PolynomialEvaluator
 {
@@ -38,7 +41,18 @@ class PolynomialEvaluator
                 coefPowPairs[i] = ParseTerm(terms[i]);
             }
 
+            string[] formattedTerms = new string[coefPowPairs.Length];
+
+            for (int i = 0; i < coefPowPairs.Length; i++)
+            {
+                formattedTerms[i] = HtmlFormatTerm(coefPowPairs[i][0], coefPowPairs[i][1]);
+            }
+
             var result = Calculate(coefPowPairs, parsedX);
+
+            Console.WriteLine(BuildHtmlString(formattedTerms, result));
+
+            
             Console.WriteLine(polyExpression + " = " + result);
         }
     }
@@ -116,4 +130,58 @@ class PolynomialEvaluator
         return result;
     }
 
+    public static string HtmlFormatTerm(int coef, int power)
+    {
+        if (power == 0)
+        {
+            return coef.ToString();
+        }
+
+        else if (power == 1)
+        {
+            return coef.ToString() + "x";
+        }
+
+        else
+        {
+            return $"{coef}x<sup>{power}</sup>";
+        }
+    }
+
+    public static string BuildHtmlString(string[] htmlFormattedTerms, int calcResult)
+    {
+
+        string result = "";
+        if (htmlFormattedTerms[0][0] == '-')
+        {
+            result += "- " + htmlFormattedTerms[0].Substring(0);
+        }
+        else
+        {
+            result += htmlFormattedTerms[0];
+        }
+
+        for (int i = 1; i < htmlFormattedTerms.Length; i ++)
+        {
+            if (htmlFormattedTerms[i].StartsWith("-"))
+            {
+                result += " - " + htmlFormattedTerms[i].Substring(1); 
+            }
+            else
+            {
+                result += " + " + htmlFormattedTerms[i];
+            }
+        }
+
+        return $"<p>{result} = {calcResult.ToString()}</p>";
+    }
+
+    public static void SaveResultToFile(string[] htmlFormattedTerms, int x, int result)
+    {
+        string path = "C:/Users/user2/Desktop/C#/PolynomialEvaluator/history.html";
+        string html = File.ReadAllText(path);
+        int insertIndex = html.IndexOf("/body");
+
+        
+    }
 }
