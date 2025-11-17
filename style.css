@@ -1,0 +1,22 @@
+.history-entry {
+  background-color: #0b1220;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  width: 300px;
+  margin: 10px auto;
+}
+
+.polynomial {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.x-value, .result {
+  color: #cccccc;
+}
+
+h1 {
+    text-align: center;
+    color: #333333;
+}
