@@ -49,11 +49,11 @@ class PolynomialEvaluator
             }
 
             var result = Calculate(coefPowPairs, parsedX);
-
-            Console.WriteLine(BuildHtmlString(formattedTerms, result));
+            string htmlString = BuildHtmlString(formattedTerms, result, parsedX);
 
             
             Console.WriteLine(polyExpression + " = " + result);
+            SaveResultToFile(htmlString, parsedX, result);
         }
     }
 
@@ -148,7 +148,7 @@ class PolynomialEvaluator
         }
     }
 
-    public static string BuildHtmlString(string[] htmlFormattedTerms, int calcResult)
+    public static string BuildHtmlString(string[] htmlFormattedTerms, int calcResult, int x)
     {
 
         string result = "";
@@ -173,15 +173,20 @@ class PolynomialEvaluator
             }
         }
 
-        return $"<p>{result} = {calcResult.ToString()}</p>";
+        return "\t<div class=\"history-entry\">\n" +
+                "\t\t<p class=\"polynomial\">" + result +"</p>\n" +
+                "\t\t<p class=\"x-value\">x = " + x.ToString() + "</p>\n" +
+                "\t\t<p class=\"result\">Result = " + calcResult.ToString() + "</p>\n" +
+                "\t</div>\n";
     }
 
-    public static void SaveResultToFile(string[] htmlFormattedTerms, int x, int result)
+    public static void SaveResultToFile(string htmlString, int x, int result)
     {
         string path = "C:/Users/user2/Desktop/C#/PolynomialEvaluator/history.html";
         string html = File.ReadAllText(path);
-        int insertIndex = html.IndexOf("/body");
+        int insertIndex = html.IndexOf("</body>");
 
-        
+        string newHtml =  html.Substring(0, insertIndex)  + htmlString + html.Substring(insertIndex);
+        File.WriteAllText(path, newHtml);
     }
 }
