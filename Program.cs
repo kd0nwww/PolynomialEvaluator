@@ -183,12 +183,6 @@ class PolynomialEvaluator
     public static void SaveResultToFile(string htmlString)
     {
         string path = Path.Combine(AppContext.BaseDirectory, "history.html");
-
-        if (!File.Exists(path))
-        {
-            Console.WriteLine("History.html not found. Please place history.html in the same folder as the .exe file.");
-        }
-
         string html = File.ReadAllText(path);
         int insertIndex = html.IndexOf("</body>");
 
