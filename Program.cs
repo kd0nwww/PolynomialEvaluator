@@ -65,11 +65,17 @@ class PolynomialEvaluator
         string sign = "+";
         List<string> termsWithSigns = new List<string>();
 
-        foreach(var s in polynomial.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries))
+        foreach (var s in polynomial.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries))
         {
-            if (s == "+" || s == "-") sign = s;
-            else termsWithSigns.Add(sign + s.Trim());
+            string term = s.Trim();
+            if ((term.StartsWith("+") || term.StartsWith("-")) && term.Length > 1) termsWithSigns.Add(term);
+            else
+            {
+                if (term == "+" || term == "-") sign = term;
+                else termsWithSigns.Add(sign + term);
+            }
         }
+
         return termsWithSigns;
     }
 
