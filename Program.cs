@@ -9,9 +9,11 @@ class PolynomialEvaluator
     public static void Main()
     {
         Console.WriteLine("Polynomial Calculator");
+        Console.WriteLine("---------------------------------------------");
         Console.WriteLine("Type the polynomial you want to calculate...");
         Console.WriteLine("Example: 2x^2 + 3x + 8");
         Console.WriteLine("'q' to exit.");
+        Console.WriteLine("---------------------------------------------");
 
         while (true)
         {
@@ -25,15 +27,16 @@ class PolynomialEvaluator
             }
 
             Console.WriteLine("Provide x value for the expression...");
-            var xValue = Console.ReadLine();
+            var x = Console.ReadLine();
+            int parsedX;
 
-            if (!int.TryParse(xValue, out var parsedX))
+            while (!int.TryParse(x, out parsedX))
             {
                 Console.WriteLine("Please enter the integer for x.");
-                continue;
+                x = Console.ReadLine();
             }
 
-            var terms = SplitTerms(polyExpression);
+            var terms = SplitTerms(polyExpression!);
             int[][] coefPowPairs = new int[terms.Count][];
 
             for (int i = 0; i < terms.Count; i++)
@@ -51,9 +54,9 @@ class PolynomialEvaluator
             var result = Calculate(coefPowPairs, parsedX);
             string htmlString = BuildHtmlString(formattedTerms, result, parsedX);
 
-            
-            Console.WriteLine(polyExpression + " = " + result);
-            SaveResultToFile(htmlString, parsedX, result);
+            Console.WriteLine($"Result: {polyExpression} = {result}");
+            Console.WriteLine("---------------------------------------------");
+            SaveResultToFile(htmlString);
         }
     }
 
@@ -62,11 +65,10 @@ class PolynomialEvaluator
         string sign = "+";
         List<string> termsWithSigns = new List<string>();
 
-        foreach(var s in polynomial.Trim().Split(" "))
+        foreach(var s in polynomial.Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries))
         {
-            if (s == "") continue;
             if (s == "+" || s == "-") sign = s;
-            else termsWithSigns.Add(sign + s);
+            else termsWithSigns.Add(sign + s.Trim());
         }
         return termsWithSigns;
     }
@@ -132,36 +134,28 @@ class PolynomialEvaluator
 
     public static string HtmlFormatTerm(int coef, int power)
     {
-        if (power == 0)
-        {
-            return coef.ToString();
-        }
+        string coefStr;
 
-        else if (power == 1)
-        {
-            return coef.ToString() + "x";
-        }
+        if (coef == 1 && power != 0) coefStr = "";
+        else if (coef == -1 && power != 0) coefStr = "-";
+        else coefStr = coef.ToString();
 
-        else
-        {
-            return $"{coef}x<sup>{power}</sup>";
-        }
+        if (power == 0) return coefStr;
+        else if (power == 1) return coefStr + "x";
+        else return $"{coefStr}x<sup>{power}</sup>";
     }
 
     public static string BuildHtmlString(string[] htmlFormattedTerms, int calcResult, int x)
     {
+        if (htmlFormattedTerms.Length == 0) return "";
 
-        string result = "";
-        if (htmlFormattedTerms[0][0] == '-')
+        string result = htmlFormattedTerms[0];
+        if (result.StartsWith("-"))
         {
-            result += "- " + htmlFormattedTerms[0].Substring(0);
-        }
-        else
-        {
-            result += htmlFormattedTerms[0];
+            result = "- " + result.Substring(1);
         }
 
-        for (int i = 1; i < htmlFormattedTerms.Length; i ++)
+        for (int i = 1; i < htmlFormattedTerms.Length; i++)
         {
             if (htmlFormattedTerms[i].StartsWith("-"))
             {
@@ -173,20 +167,26 @@ class PolynomialEvaluator
             }
         }
 
-        return "\t<div class=\"history-entry\">\n" +
-                "\t\t<p class=\"polynomial\">" + result +"</p>\n" +
+        return  "\t<div class=\"history-entry\">\n" +
+                "\t\t<p class=\"polynomial\">" + result + "</p>\n" +
                 "\t\t<p class=\"x-value\">x = " + x.ToString() + "</p>\n" +
                 "\t\t<p class=\"result\">Result = " + calcResult.ToString() + "</p>\n" +
                 "\t</div>\n";
     }
 
-    public static void SaveResultToFile(string htmlString, int x, int result)
+    public static void SaveResultToFile(string htmlString)
     {
-        string path = "C:/Users/user2/Desktop/C#/PolynomialEvaluator/history.html";
+        string path = Path.Combine(AppContext.BaseDirectory, "history.html");
+
+        if (!File.Exists(path))
+        {
+            Console.WriteLine("History.html not found. Please place history.html in the same folder as the .exe file.");
+        }
+
         string html = File.ReadAllText(path);
         int insertIndex = html.IndexOf("</body>");
 
-        string newHtml =  html.Substring(0, insertIndex)  + htmlString + html.Substring(insertIndex);
+        var newHtml = html.Insert(insertIndex, htmlString);
         File.WriteAllText(path, newHtml);
     }
 }
