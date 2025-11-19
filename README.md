@@ -11,6 +11,7 @@ Simple console C# application, that allows user to enter polynomials, compute th
 - Save calculation history to `history.html`.
 - Support of basic formatting (signs and exponents).
 - Support of negative coefficients and unit coefficients example: `-x^2`, `+x`.
+- **NOTE**: the repository contains templates of `history.html` and `style.css`, when you run the program those files are copied into `/bin/Debug/net8.0`. Calculation history is available from there.
 
 ---
 
